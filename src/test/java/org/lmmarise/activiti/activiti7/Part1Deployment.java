@@ -5,8 +5,11 @@ import org.activiti.engine.repository.Deployment;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.Assert;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.zip.ZipInputStream;
 
 /**
  * @author lmmarise.j@gmail.com
@@ -41,6 +44,20 @@ public class Part1Deployment {
             System.out.println("DeploymentTime：" + dep.getDeploymentTime());
             System.out.println("Key：" + dep.getKey());
         }
+    }
+    
+    // 通过ZIP部署流程
+    @Test
+    public void initDeploymentZIP() {
+        InputStream fileInputStream = this.getClass().getClassLoader()
+                .getResourceAsStream("BPMN/QingJiaLiuCheng.bpmn20.zip");
+        Assert.notNull(fileInputStream, "QingJiaLiuCheng.bpmn20.zip is null");
+        ZipInputStream zip = new ZipInputStream(fileInputStream);
+        Deployment deployment = repositoryService.createDeployment()
+                .addZipInputStream(zip)
+                .name("请假流程_V2 zip 部署测试")
+                .deploy();
+        System.out.println(deployment.getName());
     }
     
 }

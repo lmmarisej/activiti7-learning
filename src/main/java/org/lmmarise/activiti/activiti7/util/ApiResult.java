@@ -14,7 +14,6 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class ApiResult<T> implements Serializable  {
     private boolean success;
     private String errorCode;

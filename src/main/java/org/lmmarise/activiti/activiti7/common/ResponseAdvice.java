@@ -6,13 +6,13 @@ import org.lmmarise.activiti.activiti7.common.annotation.IgnoredControllerAdvice
 import org.lmmarise.activiti.activiti7.common.exception.BasicBizErrorEnum;
 import org.lmmarise.activiti.activiti7.common.exception.BizException;
 import org.lmmarise.activiti.activiti7.util.ApiResult;
-import org.lmmarise.activiti.activiti7.util.ResponseCode;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -53,7 +53,15 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
     @ExceptionHandler({Throwable.class})
     public ApiResult<Object> handleException(Throwable ex) {
         log.error("handleException", ex);
-        return ApiResult.failure(ResponseCode.ERROR.getCode(), ResponseCode.ERROR.getDesc());
+        return ApiResult.failure(BasicBizErrorEnum.ILLEGAL_ARGUMENT.getErrorCode(), ex.getMessage());
+    }
+    
+    @ResponseBody
+    @ExceptionHandler({MissingServletRequestParameterException.class})
+    public ApiResult handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+        log.debug("handleBizException", ex);
+        return ApiResult.failure(BasicBizErrorEnum.MISS_REQUIRE_PARAM.getErrorCode(),
+                BasicBizErrorEnum.MISS_REQUIRE_PARAM.getErrorMsg() + "：" + ex.getMessage());
     }
     
     @ResponseBody

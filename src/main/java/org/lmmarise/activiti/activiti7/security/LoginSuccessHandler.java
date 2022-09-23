@@ -37,11 +37,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         logger.info("登录成功2");
         httpServletResponse.setContentType("application/json;charset=UTF-8");
         httpServletResponse.getWriter().write(objectMapper.writeValueAsString(
-                ApiResult.builder()
-                        .success(true)
-                        .message("登录成功")
-                        .data(authentication.getName())
-                        .build()
+                ApiResult.success(authentication.getName(), "登录成功")
         ));
     }
 }

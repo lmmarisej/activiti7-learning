@@ -6,6 +6,8 @@ package org.lmmarise.activiti.activiti7.common.exception;
  */
 public enum BasicBizErrorEnum implements ExceptionEnum {
     OTHER("OTHER", "未知异常"),
+    LOGIN_FAIL("LOGIN_FAIL", "登录失败"),
+    MISS_REQUIRE_PARAM("MISS_REQUIRE_PARAM", "缺少必要参数"),
     CHECK_NO_PASS("CHECK_NO_PASS", "校验不通过，请完成必填信息"),
     USER_CONTEXT_MISS("USER_CONTEXT_MISS", "用户上下文缺失"),
     AUDITOR_CONTEXT_MISS("AUDITOR_CONTEXT_MISS", "审计上下文缺失"),

@@ -3,6 +3,8 @@ package org.lmmarise.activiti.activiti7.common;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.lmmarise.activiti.activiti7.common.annotation.IgnoredControllerAdvice;
+import org.lmmarise.activiti.activiti7.common.exception.BasicBizErrorEnum;
+import org.lmmarise.activiti.activiti7.common.exception.BizException;
 import org.lmmarise.activiti.activiti7.util.ApiResult;
 import org.lmmarise.activiti.activiti7.util.ResponseCode;
 import org.springframework.core.MethodParameter;
@@ -53,4 +55,30 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
         log.error("handleException", ex);
         return ApiResult.failure(ResponseCode.ERROR.getCode(), ResponseCode.ERROR.getDesc());
     }
+    
+    @ResponseBody
+    @ExceptionHandler({IllegalArgumentException.class})
+    public ApiResult handleValidException(IllegalArgumentException e) {
+        log.debug("handleBizException", e);
+        return ApiResult.failure(BasicBizErrorEnum.ILLEGAL_ARGUMENT.getErrorCode(), e.getMessage());
+    }
+    
+    @ResponseBody
+    @ExceptionHandler({IllegalStateException.class})
+    public ApiResult handleValidException(IllegalStateException e) {
+        log.debug("handleBizException", e);
+        return ApiResult.failure(BasicBizErrorEnum.ILLEGAL_STATE.getErrorCode(), e.getMessage());
+    }
+    
+    @ResponseBody
+    @ExceptionHandler({BizException.class})
+    public ApiResult handleBizBasicException(BizException ex) {
+        log.debug("handleBizException", ex);
+        if (Objects.nonNull(ex.getErrorData())) {
+            return ApiResult.failure(ex.getErrorCode(), ex.getMessage(), ex.getErrorData());
+        } else {
+            return ApiResult.failure(ex.getErrorCode(), ex.getErrorMsg());
+        }
+    }
+    
 }

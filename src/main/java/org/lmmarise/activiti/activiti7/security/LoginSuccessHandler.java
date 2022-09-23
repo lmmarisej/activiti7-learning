@@ -1,8 +1,7 @@
 package org.lmmarise.activiti.activiti7.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.lmmarise.activiti.activiti7.util.AjaxResponse;
-import org.lmmarise.activiti.activiti7.util.GlobalConfig;
+import org.lmmarise.activiti.activiti7.util.ApiResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +37,11 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         logger.info("登录成功2");
         httpServletResponse.setContentType("application/json;charset=UTF-8");
         httpServletResponse.getWriter().write(objectMapper.writeValueAsString(
-                AjaxResponse.AjaxData(GlobalConfig.ResponseCode.SUCCESS.getCode(),
-                        GlobalConfig.ResponseCode.SUCCESS.getDesc(),
-                        authentication.getName()
-                )));
+                ApiResult.builder()
+                        .success(true)
+                        .message("登录成功")
+                        .data(authentication.getName())
+                        .build()
+        ));
     }
 }

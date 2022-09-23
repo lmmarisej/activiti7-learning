@@ -1,8 +1,8 @@
 package org.lmmarise.activiti.activiti7.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.lmmarise.activiti.activiti7.util.AjaxResponse;
-import org.lmmarise.activiti.activiti7.util.GlobalConfig;
+import org.lmmarise.activiti.activiti7.util.ApiResult;
+import org.lmmarise.activiti.activiti7.util.ResponseCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,22 +22,26 @@ import java.io.IOException;
  */
 @Component("loginFailureHandler")
 public class LoginFailureHandler implements AuthenticationFailureHandler {
-
+    
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
+    
     @Autowired
     private ObjectMapper objectMapper;
-
+    
     @Override
     public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
         logger.info("登录失败");
         httpServletResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         httpServletResponse.setContentType("application/json;charset=UTF-8");
         
-        httpServletResponse.getWriter().write(objectMapper.writeValueAsString(
-                AjaxResponse.AjaxData(GlobalConfig.ResponseCode.ERROR.getCode(),
-                        GlobalConfig.ResponseCode.ERROR.getDesc(),
-                        "登录失败："+e.getMessage()
-                )));
+        httpServletResponse.getWriter()
+                .write(objectMapper.writeValueAsString(
+                        ApiResult.builder()
+                                .success(false)
+                                .message(e.getMessage())
+                                .errorData(ResponseCode.ERROR.getDesc())
+                                .errorCode(ResponseCode.ERROR.getCode())
+                                .build()
+                ));
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -53,28 +54,36 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
     @ExceptionHandler({Throwable.class})
     public ApiResult<Object> handleException(Throwable ex) {
         log.error("handleException", ex);
-        return ApiResult.failure(BasicBizErrorEnum.ILLEGAL_ARGUMENT.getErrorCode(), ex.getMessage());
+        return ApiResult.failure(BasicBizErrorEnum.OTHER.getErrorCode(), ex.getMessage());
     }
     
     @ResponseBody
     @ExceptionHandler({MissingServletRequestParameterException.class})
     public ApiResult handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
-        log.debug("handleBizException", ex);
+        log.debug("handleMissingServletRequestParameterException", ex);
         return ApiResult.failure(BasicBizErrorEnum.MISS_REQUIRE_PARAM.getErrorCode(),
                 BasicBizErrorEnum.MISS_REQUIRE_PARAM.getErrorMsg() + "：" + ex.getMessage());
     }
     
     @ResponseBody
+    @ExceptionHandler({AccessDeniedException.class})
+    public ApiResult handleAccessDeniedException(AccessDeniedException ex) {
+        log.debug("handleAccessDeniedException", ex);
+        return ApiResult.failure(BasicBizErrorEnum.MISS_REQUIRE_PARAM.getErrorCode(),
+                BasicBizErrorEnum.NO_ACCESS_PERMISSION.getErrorMsg() + "：" + ex.getMessage());
+    }
+    
+    @ResponseBody
     @ExceptionHandler({IllegalArgumentException.class})
     public ApiResult handleValidException(IllegalArgumentException e) {
-        log.debug("handleBizException", e);
+        log.debug("handleIllegalArgumentException", e);
         return ApiResult.failure(BasicBizErrorEnum.ILLEGAL_ARGUMENT.getErrorCode(), e.getMessage());
     }
     
     @ResponseBody
     @ExceptionHandler({IllegalStateException.class})
     public ApiResult handleValidException(IllegalStateException e) {
-        log.debug("handleBizException", e);
+        log.debug("handleIllegalStateException", e);
         return ApiResult.failure(BasicBizErrorEnum.ILLEGAL_STATE.getErrorCode(), e.getMessage());
     }
     

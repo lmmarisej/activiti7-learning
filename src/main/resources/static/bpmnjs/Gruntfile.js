@@ -1,6 +1,6 @@
-  var path = require('path');
+var path = require('path');
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
   require('load-grunt-tasks')(grunt);
 
@@ -19,9 +19,9 @@ module.exports = function(grunt) {
           debug: true
         },
         transform: [
-          [ 'stringify', {
-            extensions: [ '.bpmn' ]
-          } ]
+          ['stringify', {
+            extensions: ['.bpmn']
+          }]
         ],
         plugin: [
           'esmify'
@@ -32,12 +32,12 @@ module.exports = function(grunt) {
           watch: true
         },
         files: {
-          'dist/index.js': [ 'app/**/*.js' ]
+          'dist/index.js': ['app/**/*.js']
         }
       },
       app: {
         files: {
-          'dist/index.js': [ 'app/**/*.js' ]
+          'dist/index.js': ['app/**/*.js']
         }
       }
     },
@@ -94,8 +94,8 @@ module.exports = function(grunt) {
       },
 
       samples: {
-        files: [ 'app/**/*.*' ],
-        tasks: [ 'copy:app' ]
+        files: ['app/**/*.*'],
+        tasks: ['copy:app']
       },
 
       less: {
@@ -126,7 +126,7 @@ module.exports = function(grunt) {
 
   // tasks
 
-  grunt.registerTask('build', [ 'copy', 'less', 'browserify:app' ]);
+  grunt.registerTask('build', ['copy', 'less', 'browserify:app']);
 
   grunt.registerTask('auto-build', [
     'copy',
@@ -136,5 +136,5 @@ module.exports = function(grunt) {
     'watch'
   ]);
 
-  grunt.registerTask('default', [ 'build' ]);
+  grunt.registerTask('default', ['build']);
 };

@@ -35,7 +35,7 @@ public class BrowserSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .formLogin()
-//                .loginPage("/login")
+                .loginPage("/layuimini/page/login-1.html")
                 .loginProcessingUrl("/login")
                 .successHandler(loginSuccessHandler)
                 .failureHandler(loginFailureHandler)
@@ -45,6 +45,12 @@ public class BrowserSecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
+                .antMatchers("/layuimini/page/login-1.html").permitAll()
+                .antMatchers("/layuimini/css/**").permitAll()
+                .antMatchers("/layuimini/font/**").permitAll()
+                .antMatchers("/layuimini/api/**").permitAll()
+                .antMatchers("/layuimini/js/**").permitAll()
+                .antMatchers("/layuimini/lib/**").permitAll()
                 .antMatchers("/bpmnjs/**").permitAll()
 //                .anyRequest().permitAll()
                 .anyRequest().authenticated()

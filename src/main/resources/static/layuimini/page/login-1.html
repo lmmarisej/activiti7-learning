@@ -201,10 +201,8 @@
                 processData: false,
                 success: function (res) {
                     if (res.success) {
-                        layer.msg('登录成功', function () {
-                            localStorage.setItem("userName", res.data)
-                            window.location = '../index.html';
-                        });
+                        localStorage.setItem("userName", res.data)
+                        window.location = '../index.html';
                     } else {
                         layer.alert(res.message, {
                             icon: 2,

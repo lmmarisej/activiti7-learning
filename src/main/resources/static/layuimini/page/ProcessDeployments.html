@@ -121,7 +121,9 @@
             defaultToolbar: [],
             url: '' + publicurl + 'process/definitions/page',
             parseData: function (res) { //res 即为原始返回的数据
+                console.log(res)
                 return {
+                    "code": res.success ? 0 : 1,
                     "message": res.message, //解析提示文本
                     "count": res.data.length, //解析数据长度
                     "data": res.data //解析数据列表
@@ -167,7 +169,7 @@
             } else if (obj.event === 'delete') {
                 doDel(obj);
             } else if (obj.event === 'look') {
-                window.open('' + publicurl + 'bpmnjs/dist/index.html?type=lookBpmn&deploymentFileUUID=' + data.DeploymentId + '&deploymentName=' + data.ResourceName + '');
+                window.open(`${publicurl}bpmnjs/dist/index.html?type=lookBpmn&deploymentFileUUID=${data.deploymentId}&deploymentName=${data.resourceName}`);
             }
         });
 
@@ -201,7 +203,6 @@
                             layer.msg('请选择文件');
                             return;
                         }
-                        ;
                         var formFile = new FormData();
                         formFile.append('processFile', fileObj);
                         // formFile.append('deploymentName',$('input[name="deploymentName"]').val());
@@ -210,7 +211,7 @@
                         $.ajax({
                             cache: true,
                             type: "post",
-                            url: '' + publicurl + 'processDefinition/uploadStreamAndDeployment',
+                            url: '' + publicurl + 'process/definition/add-by-file',
                             async: false,
                             data: formFile,
                             contentType: false,
@@ -244,45 +245,53 @@
             }, function (i) {
                 layer.close(i);
                 var loadIndex = layer.load(2);
-                $.get('' + publicurl + 'processDefinition/delDefinition', {
-                    pdID: obj.data ? obj.data.DeploymentId : '',
-                }, function (res) {
-                    layer.close(loadIndex);
-                    if (res.status === 0) {
-                        layer.msg(res.msg, {icon: 1});
-                        obj.del();
-                        console.log(obj, "删除数据");
-                        insTb.reload();
-                    } else {
-                        layer.alert(res.msg + '<br>' + res.obj, {icon: 2});
+                $.ajax({
+                    url: publicurl + 'process/definitions/' + obj.data.deploymentId,
+                    type: 'delete',
+                    async: false,
+                    success: function (res) {
+                        layer.close(loadIndex);
+                        if (res.success) {
+                            layer.msg(res.msg, {icon: 1});
+                            obj.del();
+                            console.log(obj, "删除数据");
+                            insTb.reload();
+                        } else {
+                            layer.alert(res.errorCode + '<br>' + res.message, {icon: 2});
+                        }
+                    },
+                    error: function (xhr, textstatus, thrown) {
+                        layer.msg('fa图标接口有误');
                     }
-                }, 'json');
+                });
             });
         };
 
         /* 启动实例*/
         function stratProcessDepEditDialog(obj) {
+            console.log(obj)
             admin.open({
                 type: 1,
                 title: '启动流程部署信息',
                 content: $('#stratProcessDepEditDialog').html(),
                 success: function (layero, dIndex) {
-                    form.on('submit(strarProcessDepForm)', function (data) {
+                    form.on('submit(strarProcessDepForm)', function () {
                         var loadIndex = layer.load(2);
-                        $.get('' + publicurl + 'processInstance/startProcess',
+                        $.get('' + publicurl + 'process/instances/start',
                             {
-                                processDefinitionKey: obj.data.Key,
+                                processDefinitionId: obj.data.processDefinitionId,
+                                processDefinitionKey: obj.data.key,
                                 instanceName: $("#instanceName").val(),
                                 instanceVariable: $("#instanceVariable").val()
                             }, function (res) {
                                 layer.close(loadIndex);
-                                if (res.status === 0) {
+                                if (res.success) {
                                     layer.close(dIndex);
                                     layer.msg(res.msg, {icon: 1});
                                     insTb.reload();
                                 } else {
                                     layer.close(dIndex);
-                                    layer.alert(res.msg + '<br>' + res.obj, {icon: 2});
+                                    layer.alert(res.errorCode + '<br>' + res.message, {icon: 2});
                                 }
                             }, 'json');
                         layer.close(loadIndex);
@@ -291,7 +300,6 @@
                 }
             })
         }
-
 
     });
 </script>

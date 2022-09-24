@@ -79,7 +79,8 @@ public class ProcessDefinitionController {
     public List<Map<String, Object>> getDefinitions(@PageableDefault(page = 1, size = 15) Pageable pageable) {
         ArrayList<Map<String, Object>> result = new ArrayList<>();
         List<ProcessDefinition> processDefinitions = repositoryService.createProcessDefinitionQuery()
-                .listPage(pageable.getPageNumber(), pageable.getPageSize());
+                .list();
+//                .listPage(pageable.getPageNumber(), pageable.getPageSize());
         for (ProcessDefinition pd : processDefinitions) {
             HashMap<String, Object> item = new HashMap<>();
             item.put("name", pd.getName());

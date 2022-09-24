@@ -4,6 +4,7 @@ import org.activiti.api.process.model.ProcessInstance;
 import org.activiti.api.process.model.builders.ProcessPayloadBuilder;
 import org.activiti.api.process.runtime.ProcessRuntime;
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,9 @@ public class ProcessInstanceController {
     
     @Autowired
     private ProcessRuntime processRuntime;
+    
+    @Autowired
+    private RuntimeService runtimeService;
     
     /**
      * 查询流程实例。
@@ -65,15 +69,13 @@ public class ProcessInstanceController {
     public String startProcess(@RequestParam("processDefinitionKey") String processDefinitionKey,
                                @RequestParam("instanceName") String instanceName,
                                @RequestParam("instanceVariable") String instanceVariable) {
-        ProcessInstance processInstance = processRuntime.start(
-                ProcessPayloadBuilder.start()
-                        .withProcessDefinitionKey(processDefinitionKey)
-                        .withName(instanceName)
-                        .withVariable("content", instanceVariable)
-                        .withVariable("参数2", "参数2的值")
-                        .withBusinessKey("自定义BusinessKey")
-                        .build()
-        );
+        ProcessInstance processInstance = processRuntime.start(ProcessPayloadBuilder.start()
+                .withProcessDefinitionKey(processDefinitionKey)
+                .withName(instanceName)
+                .withVariable("content", instanceVariable)
+                .withVariable("参数2", "参数2的值")
+                .withBusinessKey("自定义BusinessKey")
+                .build());
         return processInstance.getName() + ";" + processInstance.getId();
     }
     
